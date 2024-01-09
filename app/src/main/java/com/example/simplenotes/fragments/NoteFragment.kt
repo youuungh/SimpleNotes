@@ -174,7 +174,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         }
     }
 
-    private fun swipeToDelete(rvNote: RecyclerView) {
+    private fun swipeToDelete(recyclerView: RecyclerView) {
         val swipeToDeleteCallback = object : SwipeToDelete() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.absoluteAdapterPosition
@@ -211,7 +211,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
-        itemTouchHelper.attachToRecyclerView(rvNote)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun clearTextFunction() {
