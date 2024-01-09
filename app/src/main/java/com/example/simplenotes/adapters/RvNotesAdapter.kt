@@ -51,7 +51,6 @@ class RvNotesAdapter: androidx.recyclerview.widget.ListAdapter<Note, RvNotesAdap
                 title.text = note.title
                 markWon.setMarkdown(content, note.content)
                 date.text = note.date
-
                 parent.setCardBackgroundColor(note.color)
 
                 itemView.setOnClickListener {

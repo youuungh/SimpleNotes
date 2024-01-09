@@ -40,8 +40,8 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        exitTransition = MaterialElevationScale(false).apply { duration = 350 }
-        enterTransition = MaterialElevationScale(true).apply { duration = 350 }
+        exitTransition = MaterialElevationScale(false).apply { duration = 300 }
+        enterTransition = MaterialElevationScale(true).apply { duration = 300 }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
