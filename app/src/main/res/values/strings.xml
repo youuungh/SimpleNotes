@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">SimpleNotes</string>
 
+    <string name="app_bar_text">나의 노트</string>
     <string name="search_here">여기서 검색</string>
     <string name="clear">clear</string>
     <string name="no_data">노트가 비었습니다</string>
     <string name="add_note">노트 작성</string>
     <string name="choose_color">배경 색상 선택</string>
+    <string name="this_is_a_title">What is Lorem Ipsum?</string>
     <string name="some_text">Lorem Ipsum is simply dummy text of
         the printing and typesetting industry. Lorem Ipsum has been
         the industry\'s standard dummy text ever since the 1500s,
@@ -14,8 +16,10 @@
         centuries, but also the leap into electronic typesetting,
         remaining essentially unchanged.
     </string>
-
-    <string name="edited_on">Edited on: %1$s</string>
+    <string name="edited_on">수정: %1$s</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dd_mm_yy">dd-mm-yy</string>
+    <string name="title">제목</string>
+    <string name="content">내용</string>
 </resources>
