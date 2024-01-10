@@ -25,7 +25,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_centerVertical="true"
                 android:padding="6dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/button_ripple"
                 android:focusable="true"
                 android:clickable="true"
                 android:src="@drawable/ic_round_arrow_back_24" />
@@ -37,7 +37,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/button_ripple"
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="6dp"
@@ -118,7 +118,7 @@
         <LinearLayout
             android:id="@+id/bottomBar"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
@@ -126,11 +126,9 @@
 
             <com.yahiaangelo.markdownedittext.MarkdownStylesBar
                 android:id="@+id/stylesBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:elevation="5dp"
                 tools:ignore="RtlSymmetry" />
 

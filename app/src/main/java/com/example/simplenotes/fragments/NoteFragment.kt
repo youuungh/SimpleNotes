@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -24,6 +25,7 @@ import com.example.simplenotes.databinding.FragmentNoteBinding
 import com.example.simplenotes.utils.SwipeToDelete
 import com.example.simplenotes.utils.hideKeyboard
 import com.example.simplenotes.viewModel.NoteActivityViewModel
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
@@ -40,8 +42,8 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enterTransition = MaterialElevationScale(true).apply { duration = 250 }
         exitTransition = MaterialElevationScale(false).apply { duration = 300 }
-        enterTransition = MaterialElevationScale(true).apply { duration = 300 }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,7 +81,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
         noteBinding.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                noteBinding.noData.isVisible = false
+                noteBinding.noDataText.isVisible = false
             }
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -117,7 +119,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         noteBinding.clearText.setOnClickListener {
             clearTextFunction()
             it.isVisible = false
-            noteBinding.noData.isVisible = false
+            noteBinding.noDataText.isVisible = false
         }
 
         noteBinding.addFab.setOnClickListener {
@@ -169,7 +171,18 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
     private fun observerDataChanges() {
         noteActivityViewModel.getAllNotes().observe(viewLifecycleOwner) { list ->
-            noteBinding.noData.isVisible = list.isEmpty()
+            noteBinding.noDataText.isVisible = list.isEmpty()
+            noteBinding.rvNote.isNestedScrollingEnabled = list.isNotEmpty()
+            val params = (noteBinding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior as? AppBarLayout.Behavior
+            if (list.isEmpty()) {
+                params?.setDragCallback(object : AppBarLayout.Behavior.DragCallback() {
+                    override fun canDrag(appBarLayout: AppBarLayout): Boolean {
+                        return false
+                    }
+                })
+            } else {
+                params?.setDragCallback(null)
+            }
             rvAdapter.submitList(list)
         }
     }
@@ -198,7 +211,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                     override fun onShown(transientBottomBar: Snackbar?) {
                         transientBottomBar?.setAction("취소") {
                             noteActivityViewModel.saveNote(note)
-                            noteBinding.noData.isVisible = false
+                            noteBinding.noDataText.isVisible = false
                         }
                         super.onShown(transientBottomBar)
                     }
@@ -206,7 +219,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                     animationMode = Snackbar.ANIMATION_MODE_FADE
                     setAnchorView(R.id.addFab)
                 }
-                snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.yellow))
+                snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.md_blue_grey_200))
                 snackBar.show()
             }
         }
