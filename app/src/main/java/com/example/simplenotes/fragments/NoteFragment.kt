@@ -61,7 +61,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
         setFragmentResultListener("key") { _, bundle ->
             when (val result = bundle.getString("bundleKey")) {
-                "저장되지 않음", "빈 노트가 삭제되었습니다" -> {
+                "노트가 저장됨", "빈 노트가 삭제되었습니다" -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         Snackbar.make(view, result, Snackbar.LENGTH_SHORT).apply {
                             animationMode = Snackbar.ANIMATION_MODE_FADE
