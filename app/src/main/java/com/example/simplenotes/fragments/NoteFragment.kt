@@ -6,15 +6,22 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -23,6 +30,7 @@ import com.example.simplenotes.activities.MainActivity
 import com.example.simplenotes.adapters.RvNotesAdapter
 import com.example.simplenotes.databinding.FragmentNoteBinding
 import com.example.simplenotes.utils.SwipeToDelete
+import com.example.simplenotes.utils.doOnApplyWindowInsets
 import com.example.simplenotes.utils.hideKeyboard
 import com.example.simplenotes.viewModel.NoteActivityViewModel
 import com.google.android.material.appbar.AppBarLayout
@@ -33,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 class NoteFragment : Fragment(R.layout.fragment_note) {
@@ -42,8 +51,8 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enterTransition = MaterialElevationScale(true).apply { duration = 250 }
-        exitTransition = MaterialElevationScale(false).apply { duration = 300 }
+        exitTransition = MaterialElevationScale(false).apply { duration = 250 }
+        enterTransition = MaterialElevationScale(true).apply { duration = 300 }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,6 +67,16 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             delay(10)
             activity.window.statusBarColor = Color.WHITE
         }
+
+        noteBinding.addFabLayout.doOnApplyWindowInsets { insetView, windowInsets, _, initialMargins ->
+            insetView.updatePadding(
+                bottom = initialMargins.bottom + windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            )
+        }
+
+        val count = parentFragmentManager.backStackEntryCount
+        Log.d("backStackCount", count.toString())
+        noteActivityViewModel.saveImagePath(null)
 
         setFragmentResultListener("key") { _, bundle ->
             when (val result = bundle.getString("bundleKey")) {
@@ -192,6 +211,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.absoluteAdapterPosition
                 val note = rvAdapter.currentList[position]
+                var actionButtonTapped = false
                 noteActivityViewModel.deleteNote(note)
                 noteBinding.search.apply {
                     hideKeyboard()
@@ -205,6 +225,15 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                 ).addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
                     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                     override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        when (!actionButtonTapped) {
+                            (note?.imagePath?.isNotEmpty()) -> {
+                                val toDelete = File(note.imagePath)
+                                if (toDelete.exists()) {
+                                    toDelete.delete()
+                                }
+                            }
+                            else -> {}
+                        }
                         super.onDismissed(transientBottomBar, event)
                     }
 
@@ -212,6 +241,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                         transientBottomBar?.setAction("취소") {
                             noteActivityViewModel.saveNote(note)
                             noteBinding.noDataText.isVisible = false
+                            actionButtonTapped = true
                         }
                         super.onShown(transientBottomBar)
                     }

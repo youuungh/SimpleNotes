@@ -11,6 +11,7 @@
         android:id="@+id/noteContentFragmentParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:transitionName="shared_element_to_content"
         tools:context=".fragments.NoteContentFragment">
 
         <RelativeLayout
@@ -79,6 +80,14 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <ImageView
+                        android:id="@+id/noteImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@null"
+                        android:visibility="gone" />
+
                     <EditText
                         android:id="@+id/edtTitle"
                         android:layout_width="match_parent"
@@ -100,7 +109,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:padding="6dp"
                         android:background="@null"
                         android:fontFamily="@font/google_sans_regular"
@@ -122,6 +131,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
+            android:fitsSystemWindows="true"
             android:visibility="gone">
 
             <com.yahiaangelo.markdownedittext.MarkdownStylesBar

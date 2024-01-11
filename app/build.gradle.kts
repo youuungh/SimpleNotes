@@ -89,6 +89,10 @@ dependencies {
     // color picker library
     implementation("com.thebluealliance:spectrum:0.7.1")
 
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+
     implementation("io.github.yahiaangelo.markdownedittext:markdownedittext:1.1.3")
     implementation("io.noties.markwon:core:4.6.2")
     implementation("io.noties.markwon:ext-strikethrough:4.6.2")

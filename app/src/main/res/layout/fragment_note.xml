@@ -96,6 +96,7 @@
             android:paddingStart="6dp"
             android:paddingEnd="6dp"
             android:paddingBottom="5dp"
+            android:layout_marginBottom="16dp"
             android:clipToPadding="false"
             android:transitionGroup="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -120,22 +121,39 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addFab"
+        <LinearLayout
+            android:id="@+id/addFabLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
             android:layout_gravity="end|bottom"
-            android:backgroundTint="@color/md_blue_grey_300"
-            android:src="@drawable/ic_round_add_24"
-            android:contentDescription="@null"
-            app:tint="@null"
-            app:elevation="3dp"
-            app:borderWidth="0dp"
-            app:rippleColor="?colorControlHighlight"
-            app:pressedTranslationZ="0dp"
-            tools:ignore="SpeakableTextPresentCheck" />
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@android:color/black"
+            android:clickable="true"
+            android:clipToPadding="false"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:outlineProvider="none">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="end|bottom"
+                android:backgroundTint="@color/md_blue_grey_300"
+                android:src="@drawable/ic_round_add_24"
+                android:transitionName="shared_element_to_content"
+                android:contentDescription="@null"
+                app:tint="@null"
+                app:elevation="3dp"
+                app:borderWidth="0dp"
+                app:rippleColor="?colorControlHighlight"
+                app:pressedTranslationZ="0dp"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -20,6 +20,20 @@ class NoteActivityViewModel(private val repository: NoteRepository): ViewModel()
         return repository.searchNote(query)
     }
 
+    private var imagePath: String? = null
+
+    fun saveImagePath(path: String?) { imagePath = path }
+
+    fun setImagePath(): String? {
+        if (imagePath != null)
+            return imagePath
+        return null
+    }
+
     fun getAllNotes(): LiveData<List<Note>> = repository.getNote()
 
+    override fun onCleared() {
+        imagePath = null
+        super.onCleared()
+    }
 }
