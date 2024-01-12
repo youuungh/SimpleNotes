@@ -79,12 +79,12 @@
                 android:id="@+id/tvAddColor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="13dp"
                 android:fontFamily="@font/google_sans_regular"
                 android:paddingStart="16dp"
                 android:paddingEnd="24dp"
                 android:text="@string/choose_color"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -103,14 +103,14 @@
                     android:id="@+id/colorPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="13dp"
                     android:layout_marginBottom="16dp"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     app:spectrum_autoPadding="true"
                     app:spectrum_colors="@array/color_picker"
                     app:spectrum_columnCount="11"
-                    app:spectrum_outlineWidth="0.3dp" />
+                    app:spectrum_outlineWidth="0.7dp" />
 
             </HorizontalScrollView>
 

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:transitionName="shared_element_to_content"
-        tools:context=".fragments.NoteContentFragment">
+        tools:context=".ui.fragments.NoteContentFragment">
 
         <RelativeLayout
             android:id="@+id/toolbarNoteContent"
@@ -63,22 +63,22 @@
 
         </RelativeLayout>
 
-        <FrameLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/bottomBar"
-            android:layout_below="@id/toolbarNoteContent">
+            android:layout_below="@id/toolbarNoteContent"
+            android:fillViewport="true">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/scrollView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:id="@+id/noteImage"
@@ -88,56 +88,74 @@
                         android:contentDescription="@null"
                         android:visibility="gone" />
 
-                    <EditText
-                        android:id="@+id/edtTitle"
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:id="@+id/deleteImageButton"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_alignEnd="@id/noteImage"
+                        android:layout_alignBottom="@id/noteImage"
                         android:layout_marginEnd="16dp"
-                        android:layout_marginTop="16dp"
-                        android:padding="5dp"
-                        android:background="@null"
-                        android:inputType="none"
-                        android:fontFamily="@font/google_sans_medium"
-                        android:textSize="24sp"
-                        android:importantForAutofill="no"
-                        android:hint="@string/title" />
-
-                    <com.yahiaangelo.markdownedittext.MarkdownEditText
-                        android:id="@+id/edtNoteContent"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_rounded_delete"
+                        android:foreground="@drawable/delete_button_ripple"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:padding="6dp"
-                        android:background="@null"
-                        android:fontFamily="@font/google_sans_regular"
-                        android:importantForAutofill="no"
-                        android:inputType="none"
-                        android:textSize="16sp"
-                        android:hint="@string/content" />
+                        android:src="@drawable/ic_round_delete_24"
+                        tools:ignore="RtlSymmetry"
+                        android:visibility="gone"/>
 
-                </LinearLayout>
+                </RelativeLayout>
 
-            </androidx.core.widget.NestedScrollView>
+                <EditText
+                    android:id="@+id/edtTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="16dp"
+                    android:padding="5dp"
+                    android:background="@null"
+                    android:inputType="none"
+                    android:fontFamily="@font/google_sans_medium"
+                    android:textSize="24sp"
+                    android:importantForAutofill="no"
+                    android:hint="@string/title" />
 
-        </FrameLayout>
+                <com.yahiaangelo.markdownedittext.MarkdownEditText
+                    android:id="@+id/edtNoteContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="4dp"
+                    android:padding="6dp"
+                    android:background="@null"
+                    android:fontFamily="@font/google_sans_regular"
+                    android:importantForAutofill="no"
+                    android:inputType="none"
+                    android:textSize="16sp"
+                    android:hint="@string/content" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
             android:id="@+id/bottomBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal"
-            android:orientation="horizontal"
             android:fitsSystemWindows="true"
+            android:orientation="horizontal"
             android:visibility="gone">
 
             <com.yahiaangelo.markdownedittext.MarkdownStylesBar
                 android:id="@+id/stylesBar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:elevation="5dp"
                 tools:ignore="RtlSymmetry" />

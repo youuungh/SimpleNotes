@@ -1,4 +1,4 @@
-package com.example.simplenotes.fragments
+package com.example.simplenotes.ui.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -33,7 +33,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import com.example.simplenotes.R
-import com.example.simplenotes.activities.MainActivity
+import com.example.simplenotes.ui.activities.MainActivity
 import com.example.simplenotes.databinding.BottomSheetDialogBinding
 import com.example.simplenotes.databinding.FragmentNoteContentBinding
 import com.example.simplenotes.model.Note
@@ -47,6 +47,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -80,6 +82,9 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         }
         sharedElementEnterTransition = animation
         sharedElementReturnTransition = animation
+        exitTransition = MaterialElevationScale(false).apply { duration = 250 }
+        enterTransition = MaterialElevationScale(true).apply { duration = 300 }
+        reenterTransition = MaterialElevationScale(true).apply { duration = 300 }
         addSharedElementListener()
     }
 
@@ -171,6 +176,10 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             }
         }
 
+        contentBinding.deleteImageButton.setOnClickListener {
+            deleteImage()
+        }
+
         setUpNote()
 
         activity.onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -199,7 +208,7 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
 
     private fun saveNoteAndGoBack() {
         if (contentBinding.edtTitle.text.toString().isEmpty() && contentBinding.edtNoteContent.text.toString().isEmpty()) {
-            result = "빈 노트가 삭제되었습니다"
+            result = "빈 노트가 삭제됨"
             setFragmentResult("key", bundleOf("bundleKey" to result))
             navController.navigate(NoteContentFragmentDirections.actionNoteContentFragmentToNoteFragment())
         } else {
@@ -255,14 +264,6 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         }
     }
 
-    private fun menuIconWithText(r: Drawable, title: String): CharSequence {
-        r.setBounds(0, 0, r.intrinsicWidth, r.intrinsicHeight)
-        val sb = SpannableString("   $title")
-        val imageSpan = ImageSpan(r, ImageSpan.ALIGN_BOTTOM)
-        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return sb
-    }
-
     private fun setUpNote() {
         val note = args.note
         val title = contentBinding.edtTitle
@@ -280,13 +281,18 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             content.renderMD(note.content)
             lastEdited.text = getString(R.string.edited_on, note.date)
             color = note.color
-            if (savedImage != null) setImage(savedImage)
-            else noteActivityViewModel.saveImagePath(note.imagePath)
+
+            if (savedImage != null) {
+                setImage(savedImage)
+            } else
+                noteActivityViewModel.saveImagePath(note.imagePath)
+
             contentBinding.apply {
                 job.launch {
                     delay(10)
                     noteContentFragmentParent.setBackgroundColor(color)
                     noteImage.isVisible = true
+                    deleteImageButton.isVisible = true
                 }
                 toolbarNoteContent.setBackgroundColor(color)
                 bottomBar.setBackgroundColor(color)
@@ -299,6 +305,7 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         if (filePath != null) {
             val uri = Uri.fromFile(File(filePath))
             contentBinding.noteImage.isVisible = true
+            contentBinding.deleteImageButton.isVisible = true
             try {
                 job.launch {
                     requireContext().asyncImageLoader(uri, contentBinding.noteImage, this)
@@ -306,8 +313,33 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             } catch (e: Exception) {
                 context?.shortToast(e.message)
                 contentBinding.noteImage.isVisible = false
+                contentBinding.deleteImageButton.isVisible = false
             }
-        } else contentBinding.noteImage.isVisible = false
+        } else {
+            contentBinding.noteImage.isVisible = false
+            contentBinding.deleteImageButton.isVisible = false
+        }
+    }
+
+    private fun deleteImage() {
+        if (note?.imagePath != null) {
+            val toDelete = File(note?.imagePath!!)
+            if (toDelete.exists()) {
+                toDelete.delete()
+            }
+        }
+        if (noteActivityViewModel.setImagePath() != null) {
+            val toDelete = File(noteActivityViewModel.setImagePath()!!)
+            if (toDelete.exists()) {
+                toDelete.delete()
+            }
+            noteActivityViewModel.saveImagePath(null)
+        }
+
+        contentBinding.noteImage.isVisible = false
+        contentBinding.deleteImageButton.isVisible = false
+        updateNote()
+        context?.shortToast("이미지 삭제됨")
     }
 
     @Suppress("DEPRECATION")
@@ -319,7 +351,7 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
 
         if (requestCode == SELECT_IMAGE_FROM_STORAGE && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
-            Log.d("Tag", uri.toString())
+            Log.d("TAG", uri.toString())
             if (uri != null) {
                 val selectedImagePath = getImageUriWithAuthority(requireContext(), uri, requireActivity())
                 noteActivityViewModel.saveImagePath(selectedImagePath)
@@ -327,36 +359,6 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        menu.add(0, 1, 1, menuIconWithText(ContextCompat.getDrawable(requireContext(), R.drawable.ic_round_delete_24)!!, getString(R.string.delete)))
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            1 -> {
-                if (note?.imagePath != null) {
-                    val toDelete = File(note?.imagePath!!)
-                    if (toDelete.exists()) {
-                        toDelete.delete()
-                    }
-                }
-                if (noteActivityViewModel.setImagePath() != null) {
-                    val toDelete = File(noteActivityViewModel.setImagePath()!!)
-                    if (toDelete.exists()) {
-                        toDelete.delete()
-                    }
-                    noteActivityViewModel.saveImagePath(null)
-                }
-
-                contentBinding.noteImage.isVisible = false
-                updateNote()
-                context?.shortToast("삭제됨")
-            }
-        }
-        return super.onContextItemSelected(item)
     }
 
     override fun onDestroy() {

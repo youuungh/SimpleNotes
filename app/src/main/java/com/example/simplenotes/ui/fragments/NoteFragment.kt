@@ -1,4 +1,4 @@
-package com.example.simplenotes.fragments
+package com.example.simplenotes.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
@@ -12,21 +12,17 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.simplenotes.R
-import com.example.simplenotes.activities.MainActivity
+import com.example.simplenotes.ui.activities.MainActivity
 import com.example.simplenotes.adapters.RvNotesAdapter
 import com.example.simplenotes.databinding.FragmentNoteBinding
 import com.example.simplenotes.utils.SwipeToDelete
@@ -53,6 +49,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         super.onCreate(savedInstanceState)
         exitTransition = MaterialElevationScale(false).apply { duration = 250 }
         enterTransition = MaterialElevationScale(true).apply { duration = 300 }
+        reenterTransition = MaterialElevationScale(true).apply { duration = 300 }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,7 +77,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
         setFragmentResultListener("key") { _, bundle ->
             when (val result = bundle.getString("bundleKey")) {
-                "노트가 저장됨", "빈 노트가 삭제되었습니다" -> {
+                "노트가 저장됨", "빈 노트가 삭제됨" -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         Snackbar.make(view, result, Snackbar.LENGTH_SHORT).apply {
                             animationMode = Snackbar.ANIMATION_MODE_FADE
@@ -142,7 +139,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         }
 
         noteBinding.addFab.setOnClickListener {
-            noteBinding.appBarLayout.visibility = View.INVISIBLE
+            //noteBinding.appBarLayout.visibility = View.INVISIBLE
             navController.navigate(NoteFragmentDirections.actionNoteFragmentToNoteContentFragment())
         }
 
@@ -238,7 +235,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                     }
 
                     override fun onShown(transientBottomBar: Snackbar?) {
-                        transientBottomBar?.setAction("취소") {
+                        transientBottomBar?.setAction("실행취소") {
                             noteActivityViewModel.saveNote(note)
                             noteBinding.noDataText.isVisible = false
                             actionButtonTapped = true

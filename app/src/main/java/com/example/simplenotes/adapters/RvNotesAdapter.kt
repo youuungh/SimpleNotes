@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.simplenotes.R
 import com.example.simplenotes.databinding.NoteItemLayoutBinding
-import com.example.simplenotes.fragments.NoteFragmentDirections
+import com.example.simplenotes.ui.fragments.NoteFragmentDirections
 import com.example.simplenotes.model.Note
 import com.example.simplenotes.utils.hideKeyboard
 import com.example.simplenotes.utils.loadHiRezThumbnail
