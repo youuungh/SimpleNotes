@@ -165,7 +165,13 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
                 }
                 @Suppress("DEPRECATION")
                 bottomSheetBinding.selectImage.setOnClickListener {
-                    Intent(Intent.ACTION_GET_CONTENT).also { chooseIntent ->
+//                    Intent(Intent.ACTION_GET_CONTENT).also { chooseIntent ->
+//                        chooseIntent.type = "image/*"
+//                        chooseIntent.resolveActivity(activity.packageManager!!.also {
+//                            startActivityForResult(chooseIntent, SELECT_IMAGE_FROM_STORAGE)
+//                        })
+//                    }
+                    Intent(MediaStore.ACTION_PICK_IMAGES).also { chooseIntent ->
                         chooseIntent.type = "image/*"
                         chooseIntent.resolveActivity(activity.packageManager!!.also {
                             startActivityForResult(chooseIntent, SELECT_IMAGE_FROM_STORAGE)
