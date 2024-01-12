@@ -1,6 +1,6 @@
 ## Simple Notes
 
-MVVM 아키텍처 디자인 패턴을 따르며 안드로이드 Jetpack Component를 사용한 간단한 노트 앱.<br/><br/>
+MVVM 아키텍처 디자인 패턴을 따르며 안드로이드 Jetpack Component를 사용한 간단한 노트 앱<br/><br/>
 
 ## MVVM(Model-View-ViewModel)
 
@@ -10,10 +10,10 @@ MVC에서 파생된, Model과 View간의 의존성뿐만 아니라 Controller와
 ## Libraries
 <ul>
 <li><a href="https://developer.android.com/topic/libraries/architecture/room" target="_blank">Room</a></li>
-<li><a href="https://developer.android.com/topic/libraries/architecture/livedata">Livedata</a></li>
-<li><a href="https://developer.android.com/topic/libraries/architecture/viewmodel" target="_blank">Viewmodel</a></li>
+<li><a href="https://developer.android.com/topic/libraries/architecture/livedata">LiveData</a></li>
+<li><a href="https://developer.android.com/topic/libraries/architecture/viewmodel" target="_blank">ViewModel</a></li>
 <li><a href="https://developer.android.com/kotlin/coroutines" target="_blank">Coroutines</a></li>
-<li><a href="https://material.io/develop/android/docs/getting-started/" target="_blank">Material library</a></li>
+<li><a href="https://material.io/develop/android/docs/getting-started/" target="_blank">Material Library</a></li>
 <li><a href="https://developer.android.com/guide/navigation/navigation-getting-started" target="_blank">Navigation Component</a></li>
 </ul><br/>
 
