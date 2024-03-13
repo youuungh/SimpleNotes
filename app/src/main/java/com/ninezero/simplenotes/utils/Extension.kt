@@ -1,4 +1,4 @@
-package com.example.simplenotes.utils
+package com.ninezero.simplenotes.utils
 
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE

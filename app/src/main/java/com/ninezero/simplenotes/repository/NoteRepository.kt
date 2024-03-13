@@ -1,7 +1,7 @@
-package com.example.simplenotes.repository
+package com.ninezero.simplenotes.repository
 
-import com.example.simplenotes.db.NoteDatabase
-import com.example.simplenotes.model.Note
+import com.ninezero.simplenotes.db.NoteDatabase
+import com.ninezero.simplenotes.model.Note
 
 class NoteRepository(private val db: NoteDatabase) {
 

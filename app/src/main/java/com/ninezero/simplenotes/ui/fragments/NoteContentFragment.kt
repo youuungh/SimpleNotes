@@ -1,4 +1,4 @@
-package com.example.simplenotes.ui.fragments
+package com.ninezero.simplenotes.ui.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -26,21 +26,19 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
-import com.example.simplenotes.R
-import com.example.simplenotes.ui.activities.MainActivity
-import com.example.simplenotes.databinding.BottomSheetDialogBinding
-import com.example.simplenotes.databinding.FragmentNoteContentBinding
-import com.example.simplenotes.model.Note
-import com.example.simplenotes.utils.asyncImageLoader
-import com.example.simplenotes.utils.getImageUriWithAuthority
-import com.example.simplenotes.utils.getPhotoFile
-import com.example.simplenotes.utils.hideKeyboard
-import com.example.simplenotes.utils.shortToast
-import com.example.simplenotes.viewModel.NotesViewModel
+import com.ninezero.simplenotes.R
+import com.ninezero.simplenotes.databinding.BottomSheetDialogBinding
+import com.ninezero.simplenotes.databinding.FragmentNoteContentBinding
+import com.ninezero.simplenotes.model.Note
+import com.ninezero.simplenotes.utils.asyncImageLoader
+import com.ninezero.simplenotes.utils.getImageUriWithAuthority
+import com.ninezero.simplenotes.utils.getPhotoFile
+import com.ninezero.simplenotes.utils.hideKeyboard
+import com.ninezero.simplenotes.utils.shortToast
+import com.ninezero.simplenotes.viewModel.NotesViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialElevationScale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel

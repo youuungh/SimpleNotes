@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.simplenotes"
+    namespace = "com.ninezero.simplenotes"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.simplenotes"
+        applicationId = "com.ninezero.simplenotes"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

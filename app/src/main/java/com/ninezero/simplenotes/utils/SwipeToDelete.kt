@@ -1,4 +1,4 @@
-package com.example.simplenotes.utils
+package com.ninezero.simplenotes.utils
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

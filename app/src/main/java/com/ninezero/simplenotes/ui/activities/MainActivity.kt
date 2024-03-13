@@ -1,4 +1,4 @@
-package com.example.simplenotes.ui.activities
+package com.ninezero.simplenotes.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,13 +6,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
-import com.example.simplenotes.databinding.ActivityMainBinding
-import com.example.simplenotes.db.NoteDatabase
-import com.example.simplenotes.repository.NoteRepository
-import com.example.simplenotes.utils.doOnApplyWindowInsets
-import com.example.simplenotes.utils.shortToast
-import com.example.simplenotes.viewModel.NotesViewModel
-import com.example.simplenotes.viewModel.NotesViewModelFactory
+import com.ninezero.simplenotes.databinding.ActivityMainBinding
+import com.ninezero.simplenotes.db.NoteDatabase
+import com.ninezero.simplenotes.repository.NoteRepository
+import com.ninezero.simplenotes.utils.doOnApplyWindowInsets
+import com.ninezero.simplenotes.utils.shortToast
+import com.ninezero.simplenotes.viewModel.NotesViewModel
+import com.ninezero.simplenotes.viewModel.NotesViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     lateinit var notesViewModel: NotesViewModel

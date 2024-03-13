@@ -1,4 +1,4 @@
-package com.example.simplenotes.ui.fragments
+package com.ninezero.simplenotes.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
@@ -22,14 +22,14 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.simplenotes.R
-import com.example.simplenotes.ui.activities.MainActivity
-import com.example.simplenotes.adapters.NotesAdapter
-import com.example.simplenotes.databinding.FragmentNoteBinding
-import com.example.simplenotes.utils.SwipeToDelete
-import com.example.simplenotes.utils.doOnApplyWindowInsets
-import com.example.simplenotes.utils.hideKeyboard
-import com.example.simplenotes.viewModel.NotesViewModel
+import com.ninezero.simplenotes.R
+import com.ninezero.simplenotes.ui.activities.MainActivity
+import com.ninezero.simplenotes.adapters.NotesAdapter
+import com.ninezero.simplenotes.databinding.FragmentNoteBinding
+import com.ninezero.simplenotes.utils.SwipeToDelete
+import com.ninezero.simplenotes.utils.doOnApplyWindowInsets
+import com.ninezero.simplenotes.utils.hideKeyboard
+import com.ninezero.simplenotes.viewModel.NotesViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar

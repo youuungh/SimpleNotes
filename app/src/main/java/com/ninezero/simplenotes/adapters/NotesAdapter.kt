@@ -1,4 +1,4 @@
-package com.example.simplenotes.adapters
+package com.ninezero.simplenotes.adapters
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -11,12 +11,12 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.simplenotes.R
-import com.example.simplenotes.databinding.NoteItemLayoutBinding
-import com.example.simplenotes.ui.fragments.NoteFragmentDirections
-import com.example.simplenotes.model.Note
-import com.example.simplenotes.utils.hideKeyboard
-import com.example.simplenotes.utils.loadHiRezThumbnail
+import com.ninezero.simplenotes.R
+import com.ninezero.simplenotes.databinding.NoteItemLayoutBinding
+import com.ninezero.simplenotes.ui.fragments.NoteFragmentDirections
+import com.ninezero.simplenotes.model.Note
+import com.ninezero.simplenotes.utils.hideKeyboard
+import com.ninezero.simplenotes.utils.loadHiRezThumbnail
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import io.noties.markwon.AbstractMarkwonPlugin

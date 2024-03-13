@@ -1,10 +1,10 @@
-package com.example.simplenotes.db
+package com.ninezero.simplenotes.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.simplenotes.model.Note
+import com.ninezero.simplenotes.model.Note
 
 @Database(
     entities = [Note::class],

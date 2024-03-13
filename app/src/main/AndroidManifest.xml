@@ -19,7 +19,7 @@
         android:theme="@style/Theme.SimpleNotes"
         tools:targetApi="tiramisu">
         <provider
-            android:authorities="com.example.simplenotes.fileProvider"
+            android:authorities="com.ninezero.simplenotes.fileProvider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

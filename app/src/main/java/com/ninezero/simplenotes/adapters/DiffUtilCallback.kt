@@ -1,7 +1,7 @@
-package com.example.simplenotes.adapters
+package com.ninezero.simplenotes.adapters
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.simplenotes.model.Note
+import com.ninezero.simplenotes.model.Note
 
 class DiffUtilCallback : DiffUtil.ItemCallback<Note>() {
     override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {

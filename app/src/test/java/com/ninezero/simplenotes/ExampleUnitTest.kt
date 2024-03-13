@@ -1,4 +1,4 @@
-package com.example.simplenotes
+package com.ninezero.simplenotes
 
 import org.junit.Test
 
