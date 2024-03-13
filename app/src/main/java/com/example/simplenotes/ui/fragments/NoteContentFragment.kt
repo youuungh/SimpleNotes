@@ -6,24 +6,18 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ImageSpan
 import android.util.Log
-import android.view.ContextMenu
-import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -42,13 +36,11 @@ import com.example.simplenotes.utils.getImageUriWithAuthority
 import com.example.simplenotes.utils.getPhotoFile
 import com.example.simplenotes.utils.hideKeyboard
 import com.example.simplenotes.utils.shortToast
-import com.example.simplenotes.viewModel.NoteActivityViewModel
+import com.example.simplenotes.viewModel.NotesViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
-import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -60,18 +52,18 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
-    private val REQUEST_IMAGE_CAPTURE = 100
-    private val SELECT_IMAGE_FROM_STORAGE = 101
+
+    private val notesViewModel: NotesViewModel by activityViewModels()
+    private val args: NoteContentFragmentArgs by navArgs()
+
     private lateinit var navController: NavController
     private lateinit var contentBinding: FragmentNoteContentBinding
     private lateinit var result: String
     private lateinit var photoFile: File
     private var note: Note? = null
     private var color = -1
-    private val noteActivityViewModel: NoteActivityViewModel by activityViewModels()
     private val currentDate = SimpleDateFormat.getDateInstance().format(Date())
     private val job = CoroutineScope(Dispatchers.Main)
-    private val args: NoteContentFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,22 +74,20 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         }
         sharedElementEnterTransition = animation
         sharedElementReturnTransition = animation
-        exitTransition = MaterialElevationScale(false).apply { duration = 250 }
-        enterTransition = MaterialElevationScale(true).apply { duration = 300 }
-        reenterTransition = MaterialElevationScale(true).apply { duration = 300 }
         addSharedElementListener()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
         contentBinding = FragmentNoteContentBinding.bind(view)
 
         ViewCompat.setTransitionName(
             contentBinding.noteContentFragmentParent, "recyclerView_${args.note?.id}"
         )
 
-        navController = Navigation.findNavController(view)
-        val activity = activity as MainActivity
         registerForContextMenu(contentBinding.noteImage)
 
         contentBinding.backButton.setOnClickListener {
@@ -105,99 +95,14 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             saveNoteAndGoBack()
         }
 
-        try {
-            contentBinding.edtNoteContent.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    contentBinding.bottomBar.visibility = View.VISIBLE
-                    contentBinding.edtNoteContent.setStylesBar(contentBinding.stylesBar)
-                } else {
-                    contentBinding.bottomBar.visibility = View.GONE
-                }
-            }
-        } catch (e: Throwable) {
-            Log.d("TAG", e.stackTraceToString())
-        }
-
-        contentBinding.optionButton.setOnClickListener {
-            val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-            val bottomSheetView: View = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
-            with(bottomSheetDialog) {
-                setContentView(bottomSheetView)
-                show()
-            }
-            val bottomSheetBinding = BottomSheetDialogBinding.bind(bottomSheetView)
-            bottomSheetBinding.apply {
-                colorPicker.apply {
-                    setSelectedColor(color)
-                    setOnColorSelectedListener { value ->
-                        color = value
-                        contentBinding.apply {
-                            noteContentFragmentParent.setBackgroundColor(color)
-                            toolbarNoteContent.setBackgroundColor(color)
-                            bottomBar.setBackgroundColor(color)
-                            activity.window.statusBarColor = color
-                        }
-                    }
-                }
-                bottomSheetView.post {
-                    bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                }
-                bottomSheetBinding.camera.setOnClickListener {
-                    val permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-                    if (permission != PackageManager.PERMISSION_GRANTED) {
-                        val permissionArray = arrayOf(Manifest.permission.CAMERA)
-                        ActivityCompat.requestPermissions(activity, permissionArray, REQUEST_IMAGE_CAPTURE)
-                        ActivityCompat.OnRequestPermissionsResultCallback { requestCode, permissions, grantResults ->
-                            when (requestCode) {
-                                REQUEST_IMAGE_CAPTURE -> {
-                                    if (permissions[0] == Manifest.permission.CAMERA && grantResults.isNotEmpty()) {
-                                        Log.d("tag", "this function is called")
-                                        takePictureIntent()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (permission == PackageManager.PERMISSION_GRANTED) {
-                        takePictureIntent()
-                        bottomSheetDialog.dismiss()
-                    }
-                }
-                @Suppress("DEPRECATION")
-                bottomSheetBinding.selectImage.setOnClickListener {
-//                    Intent(Intent.ACTION_GET_CONTENT).also { chooseIntent ->
-//                        chooseIntent.type = "image/*"
-//                        chooseIntent.resolveActivity(activity.packageManager!!.also {
-//                            startActivityForResult(chooseIntent, SELECT_IMAGE_FROM_STORAGE)
-//                        })
-//                    }
-                    Intent(MediaStore.ACTION_PICK_IMAGES).also { chooseIntent ->
-                        chooseIntent.type = "image/*"
-                        chooseIntent.resolveActivity(activity.packageManager!!.also {
-                            startActivityForResult(chooseIntent, SELECT_IMAGE_FROM_STORAGE)
-                        })
-                    }
-                    bottomSheetDialog.dismiss()
-                }
-            }
-        }
-
-        contentBinding.deleteImageButton.setOnClickListener {
-            deleteImage()
-        }
-
         setUpNote()
-
-        activity.onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                saveNoteAndGoBack()
-            }
-        })
+        setUpClickListeners()
+        handleEditTextFocus()
+        handleBackPress()
     }
 
     private fun addSharedElementListener() {
-        (sharedElementEnterTransition as Transition).addListener(
-            object : TransitionListenerAdapter() {
+        (sharedElementEnterTransition as Transition).addListener(object : TransitionListenerAdapter() {
                 override fun onTransitionStart(transition: Transition) {
                     super.onTransitionStart(transition)
                     if (args.note?.imagePath != null) {
@@ -212,6 +117,20 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         )
     }
 
+    private fun setUpClickListeners() {
+        contentBinding.optionButton.setOnClickListener {
+            showBottomSheetDialog()
+        }
+
+        contentBinding.deleteImageButton.setOnClickListener { deleteImage() }
+    }
+
+    private fun handleEditTextFocus() {
+        contentBinding.edtNoteContent.setOnFocusChangeListener { _, hasFocus ->
+            contentBinding.bottomBar.visibility = if (hasFocus) View.VISIBLE else View.GONE
+        }
+    }
+
     private fun saveNoteAndGoBack() {
         if (contentBinding.edtTitle.text.toString().isEmpty() && contentBinding.edtNoteContent.text.toString().isEmpty()) {
             result = "빈 노트가 삭제됨"
@@ -219,20 +138,11 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             navController.navigate(NoteContentFragmentDirections.actionNoteContentFragmentToNoteFragment())
         } else {
             note = args.note
-            when (note) { null -> {
-                    noteActivityViewModel.saveNote(
-                        Note(
-                            0,
-                            contentBinding.edtTitle.text.toString(),
-                            contentBinding.edtNoteContent.getMD(),
-                            currentDate,
-                            color,
-                            noteActivityViewModel.setImagePath()
-                        )
-                    )
-                    result = "노트가 저장됨"
+            when (note) {
+                null -> {
+                    saveNewNote()
                     setFragmentResult("key", bundleOf("bundleKey" to result))
-                    navController.navigate(NoteContentFragmentDirections.actionNoteContentFragmentToNoteFragment())
+                    navController.popBackStack()
                 }
                 else -> {
                     updateNote()
@@ -242,31 +152,32 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         }
     }
 
+    private fun saveNewNote() {
+        notesViewModel.saveNote(
+            Note(
+                0,
+                contentBinding.edtTitle.text.toString(),
+                contentBinding.edtNoteContent.getMD(),
+                currentDate,
+                color,
+                notesViewModel.setImagePath()
+            )
+        )
+        result = "노트가 저장됨"
+    }
+
     private fun updateNote() {
-        if (note != null) {
-            noteActivityViewModel.updateNote(
+        note?.let {
+            notesViewModel.updateNote(
                 Note(
                     note!!.id,
                     contentBinding.edtTitle.text.toString(),
                     contentBinding.edtNoteContent.getMD(),
                     currentDate,
                     color,
-                    noteActivityViewModel.setImagePath()
+                    notesViewModel.setImagePath()
                 )
             )
-        }
-    }
-
-    @SuppressLint("QueryPermissionsNeeded")
-    @Suppress("DEPRECATION")
-    private fun takePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { captureIntent ->
-            photoFile = getPhotoFile(requireActivity())
-            val fileProvider = FileProvider.getUriForFile(requireContext(), getString(R.string.fileAuthority), photoFile)
-            captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-            captureIntent.resolveActivity(activity?.packageManager!!.also {
-                startActivityForResult(captureIntent, REQUEST_IMAGE_CAPTURE)
-            })
         }
     }
 
@@ -275,11 +186,11 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         val title = contentBinding.edtTitle
         val content = contentBinding.edtNoteContent
         val lastEdited = contentBinding.lastEdited
-        val savedImage = noteActivityViewModel.setImagePath()
+        val savedImage = notesViewModel.setImagePath()
 
         if (note == null) {
             lastEdited.text = getString(R.string.edited_on, SimpleDateFormat.getDateInstance().format(Date()))
-            setImage(noteActivityViewModel.setImagePath())
+            setImage(notesViewModel.setImagePath())
         }
 
         if (note != null) {
@@ -291,14 +202,14 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
             if (savedImage != null) {
                 setImage(savedImage)
             } else
-                noteActivityViewModel.saveImagePath(note.imagePath)
+                notesViewModel.saveImagePath(note.imagePath)
 
             contentBinding.apply {
                 job.launch {
                     delay(10)
                     noteContentFragmentParent.setBackgroundColor(color)
                     noteImage.isVisible = true
-                    deleteImageButton.isVisible = true
+                    note.imagePath?.let { deleteImageButton.isVisible = true }
                 }
                 toolbarNoteContent.setBackgroundColor(color)
                 bottomBar.setBackgroundColor(color)
@@ -328,18 +239,14 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
     }
 
     private fun deleteImage() {
-        if (note?.imagePath != null) {
+        note?.imagePath?.let {
             val toDelete = File(note?.imagePath!!)
-            if (toDelete.exists()) {
-                toDelete.delete()
-            }
+            if (toDelete.exists()) toDelete.delete()
         }
-        if (noteActivityViewModel.setImagePath() != null) {
-            val toDelete = File(noteActivityViewModel.setImagePath()!!)
-            if (toDelete.exists()) {
-                toDelete.delete()
-            }
-            noteActivityViewModel.saveImagePath(null)
+        notesViewModel.setImagePath()?.let {
+            val toDelete = File(notesViewModel.setImagePath()!!)
+            if (toDelete.exists()) toDelete.delete()
+            notesViewModel.saveImagePath(null)
         }
 
         contentBinding.noteImage.isVisible = false
@@ -348,23 +255,110 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         context?.shortToast("이미지 삭제됨")
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
+    @Suppress("DEPRECATION")
+    private fun takePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { captureIntent ->
+            photoFile = getPhotoFile(requireActivity())
+            val fileProvider = FileProvider.getUriForFile(requireContext(), getString(R.string.fileAuthority), photoFile)
+            captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+            captureIntent.resolveActivity(activity?.packageManager!!.also {
+                startActivityForResult(captureIntent, REQUEST_IMAGE_CAPTURE)
+            })
+        }
+    }
+
+    private fun showBottomSheetDialog() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+        val bottomSheetView: View = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
+        val bottomSheetBinding = BottomSheetDialogBinding.bind(bottomSheetView)
+        bottomSheetBinding.apply {
+            colorPicker.apply {
+                setSelectedColor(color)
+                setOnColorSelectedListener { value ->
+                    color = value
+                    contentBinding.apply {
+                        noteContentFragmentParent.setBackgroundColor(color)
+                        toolbarNoteContent.setBackgroundColor(color)
+                        bottomBar.setBackgroundColor(color)
+                        requireActivity().window.statusBarColor = color
+                    }
+                }
+            }
+
+            bottomSheetView.post {
+                bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+
+            camera.setOnClickListener {
+                val permission = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA)
+                if (permission != PackageManager.PERMISSION_GRANTED) {
+                    val permissionArray = arrayOf(Manifest.permission.CAMERA)
+                    ActivityCompat.requestPermissions(requireActivity(), permissionArray, REQUEST_IMAGE_CAPTURE)
+                    ActivityCompat.OnRequestPermissionsResultCallback { requestCode, permissions, grantResults ->
+                        when (requestCode) {
+                            REQUEST_IMAGE_CAPTURE -> {
+                                if (permissions[0] == Manifest.permission.CAMERA && grantResults.isNotEmpty()) {
+                                    Log.d("tag", "this function is called")
+                                    takePictureIntent()
+                                }
+                            }
+                        }
+                    }
+                }
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    takePictureIntent()
+                    bottomSheetDialog.dismiss()
+                }
+            }
+
+            @Suppress("DEPRECATION")
+            selectImage.setOnClickListener {
+//                    Intent(Intent.ACTION_GET_CONTENT).also { chooseIntent ->
+//                        chooseIntent.type = "image/*"
+//                        chooseIntent.resolveActivity(activity.packageManager!!.also {
+//                            startActivityForResult(chooseIntent, SELECT_IMAGE_FROM_STORAGE)
+//                        })
+//                    }
+                Intent(MediaStore.ACTION_PICK_IMAGES).also { chooseIntent ->
+                    chooseIntent.type = "image/*"
+                    chooseIntent.resolveActivity(requireActivity().packageManager!!.also {
+                        startActivityForResult(chooseIntent, SELECT_IMAGE_FROM_STORAGE)
+                    })
+                }
+                bottomSheetDialog.dismiss()
+            }
+        }
+
+        with(bottomSheetDialog) {
+            setContentView(bottomSheetView)
+            show()
+        }
+    }
+
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            noteActivityViewModel.saveImagePath(photoFile.absolutePath)
+            notesViewModel.saveImagePath(photoFile.absolutePath)
             setImage(photoFile.absolutePath)
-        }
-
-        if (requestCode == SELECT_IMAGE_FROM_STORAGE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == SELECT_IMAGE_FROM_STORAGE && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
             Log.d("TAG", uri.toString())
-            if (uri != null) {
+            uri?.let {
                 val selectedImagePath = getImageUriWithAuthority(requireContext(), uri, requireActivity())
-                noteActivityViewModel.saveImagePath(selectedImagePath)
+                notesViewModel.saveImagePath(selectedImagePath)
                 setImage(selectedImagePath)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun handleBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                saveNoteAndGoBack()
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -372,5 +366,10 @@ class NoteContentFragment : Fragment(R.layout.fragment_note_content) {
         if (job.isActive) {
             job.cancel()
         }
+    }
+
+    companion object {
+        private const val REQUEST_IMAGE_CAPTURE = 100
+        private const val SELECT_IMAGE_FROM_STORAGE = 101
     }
 }

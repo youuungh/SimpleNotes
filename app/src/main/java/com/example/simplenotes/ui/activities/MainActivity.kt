@@ -2,8 +2,6 @@ package com.example.simplenotes.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Window
-import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -13,12 +11,11 @@ import com.example.simplenotes.db.NoteDatabase
 import com.example.simplenotes.repository.NoteRepository
 import com.example.simplenotes.utils.doOnApplyWindowInsets
 import com.example.simplenotes.utils.shortToast
-import com.example.simplenotes.viewModel.NoteActivityViewModel
-import com.example.simplenotes.viewModel.NoteActivityViewModelFactory
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.example.simplenotes.viewModel.NotesViewModel
+import com.example.simplenotes.viewModel.NotesViewModelFactory
 
 class MainActivity : AppCompatActivity() {
-    lateinit var noteActivityViewModel: NoteActivityViewModel
+    lateinit var notesViewModel: NotesViewModel
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +27,9 @@ class MainActivity : AppCompatActivity() {
         try {
             setContentView(binding.root)
             val noteRepository = NoteRepository(NoteDatabase(this))
-            val noteActivityViewModelFactory = NoteActivityViewModelFactory(noteRepository)
-            noteActivityViewModel = ViewModelProvider(this,
-                noteActivityViewModelFactory)[NoteActivityViewModel::class.java]
+            val notesViewModelFactory = NotesViewModelFactory(noteRepository)
+            notesViewModel = ViewModelProvider(this,
+                notesViewModelFactory)[NotesViewModel::class.java]
         } catch (e: Exception) {
             shortToast("오류 발생")
         }

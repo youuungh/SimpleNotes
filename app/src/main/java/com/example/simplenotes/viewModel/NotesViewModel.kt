@@ -8,7 +8,9 @@ import com.example.simplenotes.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NoteActivityViewModel(private val repository: NoteRepository): ViewModel() {
+class NotesViewModel(
+    private val repository: NoteRepository
+): ViewModel() {
 
     fun saveNote(newNote: Note) = viewModelScope.launch(Dispatchers.IO) { repository.addNote(newNote) }
 
