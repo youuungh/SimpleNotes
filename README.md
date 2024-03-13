@@ -29,6 +29,8 @@ MVC에서 파생된, Model과 View간의 의존성뿐만 아니라 Controller와
     <td><img src="https://github.com/youuungh/simple-note-android-app/assets/97438155/798fb702-a560-4c9a-9188-a716bc838c61" height="400px" /></td>
     <td><img src="https://github.com/youuungh/simple-note-android-app/assets/97438155/45d6bdfd-5098-4e72-a260-3afa6cb64112" height="400px" /></td>
     <td><img src="https://github.com/youuungh/simple-note-android-app/assets/97438155/0d1de627-4deb-4963-aab4-e34abac4e452" height="400px" /></td>
+  </tr>
+  <tr>
     <td><img src="https://github.com/youuungh/simple-note-android-app/assets/97438155/056174ed-d2f4-4df4-a7a3-3cce85111c66" height="400px" /></td>
     <td><img src="https://github.com/youuungh/simple-note-android-app/assets/97438155/db3be121-be89-4c9f-8a7f-140591945f29" height="400px" /></td>
   </tr>
