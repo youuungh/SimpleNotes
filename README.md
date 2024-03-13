@@ -4,6 +4,10 @@
 
 MVVM 아키텍처 디자인 패턴을 따르며 안드로이드 Jetpack Component를 사용한 간단한 노트 앱<br/><br/>
 
+## Downloads
+
+<a href='https://github.com/youuungh/simple-note-android-app/releases'><img alt='Get it on GitHub' height="80" src='https://github.com/youuungh/simple-note-android-app/assets/97438155/10bb58ee-329b-496d-9ac0-5e737ce8ab30'/></a>
+
 ## MVVM(Model-View-ViewModel)
 
 MVC에서 파생된, Model과 View간의 의존성뿐만 아니라 Controller와 View간의 의존성도 고려하고</br> 각 구성 요소가 독립적으로 작성되고 테스트 될 수 있도록 설계된 아키텍처 패턴<br/><br/>
